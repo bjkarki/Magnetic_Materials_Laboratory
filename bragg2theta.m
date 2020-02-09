@@ -7,25 +7,29 @@ function output = bragg2theta(hkl,G,lamda)
 % lamda = wavelngth of the wave source
 
 if nargin == 1
-    G = eye(3);
-    lamda = 0.154181;
+    G = eye(3); % Assumed cubic crystal when G is not provided
+    lamda = 0.154181; % Cu K-alpha radiation source
 elseif nargin == 2
-    lamda = 0.154181;
+    lamda = 0.154181; % Cu K-alpha radiation source
 end
 
 
 if size(hkl,2) ~= 3
     error('The hkl planes need to be stored as row vectors.')
+    % i.e. the matrix should have column size 3
 end
 
 
 for i = 1 : size(hkl,1)
+    % pick a plane
     hkl_i = hkl(i,:);
-    %%calculate the dspacings
-    % g_hkl^2
+    
+    %%steps to calculate the dspacings
+    % calculate magnitude of reciprocal space g-vector
     gsquared = hkl_i * (G\hkl_i');
     % d = 1 /g_hkl
     d = 1/sqrt(gsquared);
+    
     % two-theta: 2d*sin(theta)=lamda
     twotheta(i) = 2*asind(lamda/(2*d));
 end
