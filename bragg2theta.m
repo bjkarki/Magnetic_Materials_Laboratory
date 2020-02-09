@@ -2,7 +2,7 @@ function output = bragg2theta(hkl,G,lamda)
 %%bragg2theta calculates the bragg angle for diffraction
 % Created by: Bibek Karki on 02.08.2020
 % Last updated:
-% hkl = row vectors of planes whose Bragg angles are calculated
+% hkl = row vectors of hkl planes whose Bragg angles are to be calculated
 % G = metric tensor of the crystal system
 % lamda = wavelngth of the wave source
 
