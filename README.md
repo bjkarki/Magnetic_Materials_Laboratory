@@ -7,6 +7,8 @@ Some of my crystallographic works:
 
 **XRDBruker** allows analysis of raw XRD data output from the Bruker Instrument
 
+**ZwickTest** allows analysis of raw data output from compression testing in Zwick Instrument.
+
 ## Functions:
 
 **SFNMG** calculates the structure factor for face-centered NMG
