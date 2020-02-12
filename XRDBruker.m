@@ -1,13 +1,16 @@
 classdef XRDBruker
-    %XRDBruker allows analysis of raw data output from XRD Bruker Instrument.
+    %XRDBruker allows analysis of 'uxd' data output from XRD Bruker Instrument.
     %   Data Updated: 02/12/20      Date Created: 1/13/20 
     %   Bibek Karki
-    %   
+    %   Input Argument: A = XRDBruker(filename)
+    %   Output properties :filename, data, names
+    %   Methods: plotAll(), plotTest(n), c_over_a_NM(n,cutoff), offaxis()
+
     
     properties
-        filename
-        data % Table of output from XRD tests
-        names % chi or two theta    
+        filename % Name of the uxd file
+        data % Cells of different from XRD tests
+        names % seperate chi and two theta dataset
     end
     
     methods
@@ -54,7 +57,7 @@ classdef XRDBruker
         end
         
         function plotAll(obj)
-            %%plots overlaid 2theta vs intensity plot for all data
+            %overlaid plots of 2theta vs intensity & chi vs intensity for all data
             ind = obj.names == "chi vs intensity";
             
             if ~isempty(ind)
@@ -85,7 +88,7 @@ classdef XRDBruker
         end
         
         function plotTest(obj, n)
-            %%plots overlaid 2theta vs intensity plot for given test no.
+            %%Plots the output of test n
             X = obj.data{n};
             plot(X(:,1),X(:,2),'LineWidth',1)
             if obj.names(n) == "chi vs intensity"
@@ -100,6 +103,7 @@ classdef XRDBruker
         end
         
         function outputArg = c_over_a_NM(obj,cutoff)
+            % calculates the c over a ratio based on 2theta peaks of Non-modulated Ni-Mn-Ga
             % select only twotheta vs intensity dataset
             ind = obj.names == "chi vs intensity";
             Data = obj.data(~ind);
@@ -128,8 +132,8 @@ classdef XRDBruker
         end
         
         function output = offaxis(obj)
-            % check if the input dataset is correct
-             % select only twotheta vs intensity dataset
+            % Calculates the offsets of plane normal from z-axis
+            % select only chi vs intensity dataset
             ind = obj.names == "chi vs intensity";
             if isempty(ind)
                 error ('The function does not containt chi vs intensity data') 
