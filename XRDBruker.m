@@ -1,12 +1,13 @@
 classdef XRDBruker
     %XRDBruker allows analysis of raw data output from XRD Bruker Instrument.
-    %   Data Updated:       Date Created: 1/13/20 
+    %   Data Updated: 02/12/20      Date Created: 1/13/20 
     %   Bibek Karki
     %   
     
     properties
         filename
-        data % Table of output from XRD tests   
+        data % Table of output from XRD tests
+        names % chi or two theta    
     end
     
     methods
@@ -36,6 +37,12 @@ classdef XRDBruker
                     clear a b
                 end
                 % convert each lines to numbers. Returns empty if character or string in the line
+                if contains(read_line,'; KHI')
+                    Names(n) = "chi vs intensity";
+                elseif contains (read_line,'; 2THETA')
+                    Names(n) = "2theta vs intensity";
+                end
+                    
                 numbers = str2num(read_line);
                 % If numbers variable is not empty gather data.
                 if ~isempty(numbers)
@@ -43,13 +50,31 @@ classdef XRDBruker
                 end
             end
             obj.data = Data;
+            obj.names = Names;
         end
         
         function plotAll(obj)
             %%plots overlaid 2theta vs intensity plot for all data
+            ind = obj.names == "chi vs intensity";
+            
+            if ~isempty(ind)
+                figure, hold on
+                Data = obj.data(ind);
+                for i = 1 : length(Data)
+                    X = Data{i};
+                    plot(X(:,1),X(:,2),'LineWidth',1)
+                end
+                xlabel('\chi'), ylabel('counts'), title(obj.filename(1:end-4))
+                set(gca,'FontSize',20,'FontName','Helvetica')
+                set(gcf,'color','w')
+                grid on, box on, axis tight
+                hold off
+            end
+            
             figure, hold on
-            for i = 1 : length(obj.data)
-                X = obj.data{i};
+            Data = obj.data(~ind);
+            for i = 1 : length(Data)
+                X = Data{i};
                 plot(X(:,1),X(:,2),'LineWidth',1)
             end
             xlabel('2\theta'), ylabel('counts'), title(obj.filename(1:end-4))
@@ -63,34 +88,68 @@ classdef XRDBruker
             %%plots overlaid 2theta vs intensity plot for given test no.
             X = obj.data{n};
             plot(X(:,1),X(:,2),'LineWidth',1)
-            xlabel('2\theta'), ylabel('counts'), title(strcat(obj.filename,' test-',num2str(n)))
+            if obj.names(n) == "chi vs intensity"
+                xlabel('\chi')
+            else
+                xlabel('2\theta')
+            end
+            ylabel('counts'), title(strcat(obj.filename(1:end-4),' test-',num2str(n)))
             set(gca,'FontSize',20,'FontName','Helvetica')
             set(gcf,'color','w')
             grid on, box on
         end
         
-        function outputArg = cbyaRatio(obj,cutoff)
-            % loop to calculate c by a ratio for each test
-            for i = 1 : length(obj.data)
-                test = obj.data{i}; % obtain matrix of a test
+        function outputArg = c_over_a_NM(obj,cutoff)
+            % select only twotheta vs intensity dataset
+            ind = obj.names == "chi vs intensity";
+            Data = obj.data(~ind);
+            
+            for i = 1 : length(Data)
+                test = Data{i}; % obtain matrix of a test
                 twotheta = test(:,1); % two theta
                 counts = test(:,2); % intensity
+                
                 % indices of data below cutoff twotheta
                 j = twotheta <= cutoff;
-                % dividing the table into two parts: below and above cutoff
-                twotheta1 = twotheta(j); twotheta2 = twotheta(~j);
-                counts1 = counts(j); counts2 = counts(~j);
                 
-                % index of the maximum peak and the twotheta at which it
-                % occurs
-                [~,si] = max(counts1); s = twotheta1(si);
-                [~,li] = max(counts2); l = twotheta2(li);
-                % calculated c by a ratio for given instance
-                ca(i) = sind(l/2)./sind(s/2);
+                % a = index of maximum instensity for twotheta <= cutoff
+                [~,a] = max(counts(j));
+                
+                % b+c = index of maximum intensity for twotheta > cutoff
+                b = length(counts(j));
+                [~,c] = max(counts(~j));
+                
+                % c/a = sine of bigger angle over sine of smaller angle 
+                ca(i) = sind(twotheta(b+c)/2)/sind(twotheta(a)/2);
+                
             end
             % plot output
             outputArg = ca;
-        end      
+        end
+        
+        function output = offaxis(obj)
+            % check if the input dataset is correct
+             % select only twotheta vs intensity dataset
+            ind = obj.names == "chi vs intensity";
+            if isempty(ind)
+                error ('The function does not containt chi vs intensity data') 
+            else
+                Data = obj.data(ind);
+            end
+            
+            for i = 1:length(Data)
+                X = Data{i};
+                chi = X(:,1); counts = X(:,2);
+                % indices of data below cutoff twotheta
+                j = chi <= -90;
+                [~,a] = max(counts(j));
+                b = length(counts(j));
+                [~,c] = max(counts(~j));
+
+                axistilt(i) = abs(chi(a)-chi(b+c))/4;
+            end
+            output = axistilt;
+        end
     end
 end
 
