@@ -1,5 +1,5 @@
-# NMGCrystallography
-Some of my crystallographic works:
+# Magnetic Materials Laboratory
+Some of my works while at Magnetic Materials Laboratory:
 
 ## Class
 
