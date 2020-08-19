@@ -7,7 +7,9 @@ Some of my works while at Magnetic Materials Laboratory:
 
 **XRDBruker** allows analysis of raw XRD data output from the Bruker Instrument
 
-**ZwickTest** allows analysis of raw data output from compression testing in Zwick Instrument.
+**ZwickTest** allows analysis of raw data output from compression testing in Zwick Instrument
+
+**MicroMagnetics** allows data visualtization of raw data output from the FORTRAN run of magnetic energy minimization simulation
 
 ## Functions:
 
