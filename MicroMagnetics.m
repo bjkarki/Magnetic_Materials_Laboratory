@@ -5,6 +5,7 @@ classdef MicroMagnetics
     %   Input Argument: A = MMDomainMap(filename)
     %   Output properties :filename
     %   Methods: tyx(), uvw(), domainMap(), vectorMap(),
+    
     properties
         filename % Name of the mdata00*.txt file
     end
@@ -12,12 +13,14 @@ classdef MicroMagnetics
     methods
         
         %MMDomainMap Construct an instance of this class
+        % Syntax: obj = MicroMagnetics(fname)
         function obj = MicroMagnetics(fname)
             % Store filename
             obj.filename = fname;
         end
         
         % Method to plot the magnetic field domain orientation
+        % Syntax: obj.domainMap()
         function domainMap(obj)
             % import and set required variables
             [u,v,~] = obj.uvw();
@@ -46,6 +49,7 @@ classdef MicroMagnetics
         end
         
         % Method to plot the magnetic field moments
+        % Syntax: obj.vectorMap()
         function vectorMap(obj)
             % import and set required variables
             [u,v,~] = obj.uvw();
@@ -61,7 +65,8 @@ classdef MicroMagnetics
         end
         
         % Method to obtain heat plot
-        function heatplot(obj,fname)
+        % Syntax: obj.heatplot(fname, it)
+        function heatplot(obj,fname,it)
             % import and set required variables
             a = textread(fname);
             [~,y,x] = obj.tyx();
@@ -72,7 +77,7 @@ classdef MicroMagnetics
             % reshape to identify no. of times heat plot was obtained
             a = reshape(a,n,l);
             % preview only the heatplot of final iteration           
-            a = a (:,end);
+            a = a (:,it);
             % reshape to correct format: y by x
             a = reshape(a,y,x);
             % correct unit: convert from J to kJ/m^3
@@ -91,9 +96,10 @@ classdef MicroMagnetics
         end
         
         % Method to obtain energy minimization plot;
-        function energyplot(~,fname)
+        % Syntax: obj.energyplot()
+        function energyplot(~)
             % import and set required variables
-            a = textread(fname);
+            a = textread('history');
             a = a ./ (4.05E-21); % conversion from Medha
             % Draw figure
             figure
@@ -111,6 +117,7 @@ classdef MicroMagnetics
     methods (Hidden)
         
         % Method to obtain t, y and x from the data
+        % Syntax: [t,y,x] = obj.tyx()
         function [t,y,x] = tyx(obj)
             % name of the file
             file = obj.filename;
@@ -125,6 +132,7 @@ classdef MicroMagnetics
         end
         
         % Method to import magnetic moment vectors
+        % Syntax: [u,v,w] = obj.uvw()
         function [u,v,w] = uvw(obj)
             % name of the file
             file = obj.filename;
