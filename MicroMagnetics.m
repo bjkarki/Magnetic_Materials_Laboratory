@@ -33,11 +33,13 @@ classdef MicroMagnetics
             figure
             set(gcf,'color','w')
             imagesc(theta')
-            colormap(jet)
+            caxis([-180 180])
+            colormap(hsv)
             set(gca,'YDir','normal')
             daspect([1 1 1])
             h = colorbar;
             title(h, 'degree')
+            set(h,'XTick',[-180, -90, 0, 90, 180])
             set(gca,'FontSize',18,'FontName','Helvetica')
             title('Magnetic Domain')
             
