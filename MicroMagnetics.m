@@ -29,16 +29,15 @@ classdef MicroMagnetics
                     theta(i,j) = atan2d(v(i,j),u(i,j));
                 end
             end
-            
             % Draw figure
             figure
             set(gcf,'color','w')
             imagesc(theta')
+            colormap(jet)
             set(gca,'YDir','normal')
             daspect([1 1 1])
-            shading flat
             h = colorbar;
-            title(h, 'degree')         
+            title(h, 'degree')
             set(gca,'FontSize',18,'FontName','Helvetica')
             title('Magnetic Domain')
             
@@ -51,7 +50,7 @@ classdef MicroMagnetics
             % draw figure
             figure
             set(gcf,'color','w')
-            quiver(u',v')
+            quiver(u',v',0.5)
             axis tight
             daspect([1 1 1])
             set(gca,'FontSize',16,'FontName','Helvetica')
